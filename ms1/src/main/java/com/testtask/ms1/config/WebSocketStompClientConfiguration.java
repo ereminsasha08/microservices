@@ -25,10 +25,8 @@ public class WebSocketStompClientConfiguration {
         WebSocketClient client = new StandardWebSocketClient();
         WebSocketStompClient stompClient = new WebSocketStompClient(client);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-
         ClientOneSessionHandler clientOneSessionHandler = new ClientOneSessionHandler();
-        ListenableFuture<StompSession> sessionAsync =
-                stompClient.connect(microservice2, clientOneSessionHandler);
+        ListenableFuture<StompSession> sessionAsync = stompClient.connect(microservice2, clientOneSessionHandler);
         StompSession session = sessionAsync.get();
         session.subscribe("/topic/messages", clientOneSessionHandler);
         return session;

@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StompClientService {
     @Autowired
     private StompSession session;
-    @Value("${interaction-time}")
+    @Value("${interaction.time}")
     private Integer interactionTime;
     @Setter
     @Getter

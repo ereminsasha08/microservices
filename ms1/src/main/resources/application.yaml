@@ -1,4 +1,5 @@
-interaction-time: ${interaction-time:20}
+interaction:
+  time: ${interaction.time:20}
 microservice2: ${microservice2:ws://localhost:8083/websocket-server}
 spring:
   datasource:
