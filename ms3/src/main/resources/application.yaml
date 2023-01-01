@@ -1,0 +1,16 @@
+server:
+  port: 8084
+microservice1: ${microservice1:http://localhost:8080}
+logging:
+  level:
+    root: INFO
+
+kafka:
+  server:
+    address: ${microservicekafka:localhost:9092}
+  topic:
+    name: my-kafka-topic
+  group:
+   id: my-consumer-grouphostname -I
+
+

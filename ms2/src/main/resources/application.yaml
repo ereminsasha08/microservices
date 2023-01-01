@@ -1,0 +1,11 @@
+server:
+  port: 8083
+logging:
+  level:
+    root: INFO
+kafka:
+  server:
+    address: ${microservicekafka:localhost:9092}
+  topic:
+    name: my-kafka-topic
+

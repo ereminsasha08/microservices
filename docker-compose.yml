@@ -1,0 +1,94 @@
+version: '3.1'
+services:
+  microservicekafka:
+    image: spotify/kafka
+    container_name: "microservicekafka"
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    networks:
+      - my
+    environment:
+      - "ADVERTISED_PORT=9092"
+      - "AUTO_CREATE_TOPICS=true"
+    command: >
+      bash -c
+      "(sleep 15s &&
+      /opt/kafka_2.11-0.10.1.0/bin/kafka-topics.sh
+      --create
+      --zookeeper
+      localhost:2181 --replication-factor 1 --partitions 1
+      --topic my-kafka-topic &) && (supervisord -n)"
+  microservicemariadb:
+    image: mariadb:latest
+    container_name: "microservicemariadb"
+    ports:
+      - "3306:3306"
+    networks:
+      - my
+    environment:
+      - "MARIADB_USER=root"
+      - "MARIADB_PASSWORD=root"
+      - "MARIADB_DATABASE=test"
+      - "MARIADB_ROOT_PASSWORD=root"
+    volumes:
+      - "./data/db:/var/lib/mysql"
+    depends_on:
+      - microservicekafka
+  microservice1:
+    image: openjdk:17
+    container_name: "microservice1"
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - my
+    environment:
+      - interaction-time=10000
+      - microservice2=ws://microservice2:8083/websocket-server
+      - spring.datasource.url=jdbc:mariadb://microservicemariadb:3306/test
+    volumes:
+      - "./ms1/target:/app"
+    command: [ 'java', '-jar', '/app/ms1-0.0.1-SNAPSHOT.jar' ]
+    depends_on:
+      - microservice2
+      - microservicemariadb
+  microservice2:
+    image: openjdk:17
+    container_name: "microservice2"
+    environment:
+      - microservicekafka=microservicekafka:9092
+    ports:
+      - "8081:8081"
+    networks:
+      - my
+    volumes:
+      - "./ms2/target:/app"
+    command: ['java', '-jar', '/app/ms2-0.0.1-SNAPSHOT.jar']
+    depends_on:
+      - microservicekafka
+  microservice3:
+    image: openjdk:17
+    container_name: "microservice3"
+    environment:
+      - microservice1=http://microservice1:8080
+      - microservicekafka=microservicekafka:9092
+    ports:
+      - "8082:8082"
+    networks:
+      - my
+    volumes:
+      - "./ms3/target:/app"
+    command: ['java', '-jar', '/app/ms3-0.0.1-SNAPSHOT.jar']
+    depends_on:
+      - microservice1
+networks:
+  my:
+
+
+
+
+
+
+
+
