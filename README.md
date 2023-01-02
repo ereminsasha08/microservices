@@ -18,7 +18,7 @@
 ## Запуск
 
 - Структура каталогов должна быть как в репозитории.
-- Упаковать сервисы в jar архивы (maven instal в Intellij IDEA)
+- Упаковать сервисы в jar архивы (./mvn clean package)
 - Запустить docker-compose 
 - В терминале mc1 выполнить команду 'curl http://localhost:8080/start'
 
