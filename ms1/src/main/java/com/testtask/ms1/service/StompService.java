@@ -15,20 +15,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
-public class StompClientService {
+public class StompService {
     @Autowired
     private StompSession session;
     @Value("${interaction.time}")
     private Integer interactionTime;
     @Setter
     @Getter
-    private long workTime = System.currentTimeMillis();
+    private long workTime;
     private AtomicInteger sessionId = new AtomicInteger(0);
     @Getter
     private AtomicInteger countMessage;
     @Getter
     @Setter
-    private volatile boolean sendFlag;
+    private  boolean sendFlag;
 
     @Async
     public void send() throws InterruptedException {
@@ -38,7 +38,7 @@ public class StompClientService {
         long endTime = startTime;
         while (sendFlag && interactionTime > (endTime - startTime) / 1000) {
             Message message = new Message();
-            message.setSessionId(sessionId.getAndIncrement());
+            message.setSessionId(sessionId.get());
             message.setMc1_timestamp(new Date());
             log.info("Send message" + message);
             session.send("/app/process-message", message);
@@ -46,16 +46,19 @@ public class StompClientService {
             Thread.sleep(500);
             endTime = System.currentTimeMillis();
         }
-        sendFlag = false;
-        Thread.sleep(1000);
+        Thread.sleep(1500);
         workTime = (workTime - startTime) / 1000;
-        log.info("Sending message stopped. Total messages send " + countMessage.get() + " . Time work: " + workTime + "s");
+        sessionId.incrementAndGet();
+        log.info("Sending message stopped. Total messages send: {}. Time work: {}s", countMessage.get(), workTime);
+        sendFlag = false;
 
     }
 
     public String stop() throws InterruptedException {
         sendFlag = false;
-        Thread.sleep(1500);
-        return "Sending message stopped. Total messages send " + countMessage.get() + ". Time work: " + workTime + "s";
+        Thread.sleep(2000);
+        return "Sending message stopped. Total messages send: " + countMessage.get() + ". Time work: " + workTime + "s";
     }
+
+
 }
