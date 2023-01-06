@@ -19,8 +19,13 @@ public class StompService {
     private StompSession session;
     @Value("${interaction.time}")
     private Integer interactionTime;
+
+    public synchronized void setSendFlag(boolean sendFlag) throws InterruptedException {
+        this.sendFlag = sendFlag;
+        Thread.sleep(1500);
+    }
+
     @Getter
-    @Setter
     private  boolean sendFlag;
 
     @Async
@@ -32,7 +37,6 @@ public class StompService {
             Message message = new Message(sessionId, new Date());
             log.debug("Send message" + message);
             session.send("/app/process-message", message);
-
             Thread.sleep(500);
             endTime = System.currentTimeMillis();
         }
@@ -40,7 +44,7 @@ public class StompService {
     }
 
     public void stop() throws InterruptedException {
-        sendFlag = false;
+        this.setSendFlag(false);
         log.info("Sending message stopped.");
     }
 
