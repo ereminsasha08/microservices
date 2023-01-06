@@ -36,14 +36,12 @@ public class StompService {
             Thread.sleep(500);
             endTime = System.currentTimeMillis();
         }
-        Thread.sleep(1500);
         sendFlag = false;
     }
 
-    public String stop() throws InterruptedException {
+    public void stop() throws InterruptedException {
         sendFlag = false;
         log.info("Sending message stopped.");
-        return "Sending message stopped.";
     }
 
 

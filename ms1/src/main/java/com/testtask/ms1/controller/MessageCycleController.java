@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -30,9 +29,9 @@ public class MessageCycleController {
             stompService.setSendFlag(true);
             stompService.send(messageRepository.findMaxSessionId().orElse(0) + 1);
         } else {
-            return ResponseEntity.of(Optional.of("Sending messages has already started\n"));
+            return ResponseEntity.accepted().body("Sending messages has already started.\n");
         }
-        return ResponseEntity.of(Optional.of("Sending message started\n"));
+        return ResponseEntity.accepted().body("Sending message started.\n");
     }
 
     @GetMapping("/stop")
@@ -40,9 +39,9 @@ public class MessageCycleController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> stop() throws InterruptedException {
         if (!stompService.isSendFlag())
-            return ResponseEntity.of(Optional.of("Service don't started\n"));
-        String stopMessage = stompService.stop();
-        return ResponseEntity.of(Optional.of(stopMessage + "\n"));
+            return ResponseEntity.accepted().body("Service don't started.\n");
+        stompService.stop();
+        return ResponseEntity.accepted().body("Sending message stopped.\n");
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -50,6 +49,6 @@ public class MessageCycleController {
     public void getMessage(@RequestBody Message message) {
         message.setEnd_timestamp(new Date());
         Message savedMessage = messageRepository.save(message);
-        log.info("Message save in database " + savedMessage);
+        log.debug("Message save in database " + savedMessage);
     }
 }
