@@ -8,7 +8,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "message")
+@Table(name = "message", indexes = @Index(columnList = "session_id"))
 @Data
 @NoArgsConstructor
 public class Message {
