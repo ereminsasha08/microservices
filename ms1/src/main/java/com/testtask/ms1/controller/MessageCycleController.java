@@ -28,7 +28,7 @@ public class MessageCycleController {
     public ResponseEntity<String> start() throws InterruptedException {
         if (!stompService.isSendFlag()) {
             stompService.setSendFlag(true);
-            stompService.send();
+            stompService.send(messageRepository.findMaxSessionId().orElse(0) + 1);
         } else {
             return ResponseEntity.of(Optional.of("Sending messages has already started\n"));
         }
@@ -40,7 +40,7 @@ public class MessageCycleController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> stop() throws InterruptedException {
         if (!stompService.isSendFlag())
-            return ResponseEntity.of(Optional.of("Service don't work\n"));
+            return ResponseEntity.of(Optional.of("Service don't started\n"));
         String stopMessage = stompService.stop();
         return ResponseEntity.of(Optional.of(stopMessage + "\n"));
     }
@@ -49,7 +49,6 @@ public class MessageCycleController {
     @ResponseStatus(HttpStatus.OK)
     public void getMessage(@RequestBody Message message) {
         message.setEnd_timestamp(new Date());
-        stompService.setWorkTime(System.currentTimeMillis());
         Message savedMessage = messageRepository.save(message);
         log.info("Message save in database " + savedMessage);
     }

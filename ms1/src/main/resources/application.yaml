@@ -3,11 +3,11 @@ interaction:
 microservice2: ${microservice2:ws://localhost:8083/websocket-server}
 spring:
   datasource:
-    url: ${microservice2:jdbc:mariadb://localhost:3306/test
+    url: ${microservice2:jdbc:mariadb://localhost:3306/test}
     username: root
     password: root
     driver-class-name: org.mariadb.jdbc.Driver
-  jpa.hibernate.ddl-auto: update
+  jpa.hibernate.ddl-auto: create
 server:
   port: 8080
 logging:

@@ -10,11 +10,12 @@ import java.util.Date;
 @Entity
 @Table(name = "message")
 @Data
+@NoArgsConstructor
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
+    @Column(name = "session_id")
     private Integer sessionId;
 
     private Date mc1_timestamp;
@@ -25,5 +26,13 @@ public class Message {
 
     private Date end_timestamp;
 
+    public Message(Integer sessionId, Date mc1_timestamp) {
+        this.sessionId = sessionId;
+        this.mc1_timestamp = mc1_timestamp;
+    }
 
+    @PrePersist
+    private void endTime() {
+        end_timestamp = new Date();
+    }
 }
