@@ -4,7 +4,6 @@ microservice1: ${microservice1:http://localhost:8080}
 logging:
   level:
     root: INFO
-
 kafka:
   server:
     address: ${microservicekafka:localhost:9092}
@@ -12,5 +11,8 @@ kafka:
     name: my-kafka-topic
   group:
    id: my-consumer-grouphostname -I
-
+spring:
+  kafka:
+    listener:
+      type: batch
 

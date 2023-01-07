@@ -5,7 +5,6 @@ import com.testtask.ms1.repository.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,7 +26,7 @@ public class TimeSendingAdvice {
 
     @After("sendMessage()")
     public void timeWorkAndCountMessage() throws InterruptedException {
-        Thread.sleep(500);
+        Thread.sleep(2000);
         List<Message> firstAndLastMessageFromLastSession = messageRepository.findFirstAndLastMessageFromLastSession();
         Message firstMessage = null;
         Message lastMessage = null;

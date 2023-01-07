@@ -30,7 +30,7 @@ public class StompService {
             Message message = new Message(sessionId, new Date());
             log.info("Send message" + message);
             session.send("/app/process-message", message);
-            Thread.sleep(500);
+            Thread.sleep(10);
             endTime = System.currentTimeMillis();
         }
         sendFlag = false;
@@ -43,6 +43,7 @@ public class StompService {
 
     public synchronized void setSendFlag(boolean sendFlag) throws InterruptedException {
         this.sendFlag = sendFlag;
-        Thread.sleep(1000);
+        if(!sendFlag)
+        Thread.sleep(2200);
     }
 }
