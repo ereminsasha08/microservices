@@ -23,42 +23,41 @@ public class StompService {
     @Setter
     @Getter
     private long workTime;
-    private AtomicInteger sessionId = new AtomicInteger(0);
     @Getter
     private AtomicInteger countMessage;
     @Getter
-    @Setter
     private  boolean sendFlag;
 
     @Async
-    public void send() throws InterruptedException {
+    public void send(int sessionId) throws InterruptedException {
         log.info("Sending message started");
         countMessage = new AtomicInteger(0);
         long startTime = System.currentTimeMillis();
         long endTime = startTime;
         while (sendFlag && interactionTime > (endTime - startTime) / 1000) {
             Message message = new Message();
-            message.setSessionId(sessionId.get());
+            message.setSessionId(sessionId);
             message.setMc1_timestamp(new Date());
-            log.info("Send message" + message);
+            log.debug("Send message" + message);
             session.send("/app/process-message", message);
             countMessage.incrementAndGet();
             Thread.sleep(500);
             endTime = System.currentTimeMillis();
         }
-        Thread.sleep(1500);
+        Thread.sleep(800);
         workTime = (workTime - startTime) / 1000;
-        sessionId.incrementAndGet();
         log.info("Sending message stopped. Total messages send: {}. Time work: {}s", countMessage.get(), workTime);
         sendFlag = false;
 
     }
 
     public String stop() throws InterruptedException {
-        sendFlag = false;
-        Thread.sleep(2000);
+        this.setSendFlag(false);
         return "Sending message stopped. Total messages send: " + countMessage.get() + ". Time work: " + workTime + "s";
     }
 
-
+    public synchronized void setSendFlag(boolean sendFlag) throws InterruptedException {
+        this.sendFlag = sendFlag;
+        Thread.sleep(1300);
+    }
 }
