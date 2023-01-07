@@ -41,7 +41,7 @@ public class StompService {
             log.debug("Send message" + message);
             session.send("/app/process-message", message);
             countMessage.incrementAndGet();
-            Thread.sleep(500);
+            Thread.sleep(10);
             endTime = System.currentTimeMillis();
         }
         Thread.sleep(800);

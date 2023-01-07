@@ -17,7 +17,7 @@ public class KafkaConsumerService {
     @Autowired
     private HttpMessageSendService httpMessageSendService;
 
-    @KafkaListener(topics = "${kafka.topic.name}", groupId = "${kafka.group.id}")
+    @KafkaListener(topics = "${kafka.topic.name}", groupId = "${kafka.group.id}", concurrency = "4")
     public void listen(@Payload Message message) throws URISyntaxException {
         message.setMc3_timestamp(new Date());
         log.info(String.valueOf(message));

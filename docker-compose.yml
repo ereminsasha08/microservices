@@ -17,7 +17,7 @@ services:
       /opt/kafka_2.11-0.10.1.0/bin/kafka-topics.sh
       --create
       --zookeeper
-      localhost:2181 --replication-factor 1 --partitions 1
+      localhost:2181 --replication-factor 1 --partitions 4
       --topic my-kafka-topic &) && (supervisord -n)"
   microservicemariadb:
     image: mariadb:latest
@@ -44,7 +44,7 @@ services:
     networks:
       - my
     environment:
-      - interaction.time=100
+      - interaction.time=15
       - microservice2=ws://microservice2:8083/websocket-server
       - spring.datasource.url=jdbc:mariadb://microservicemariadb:3306/test
     volumes:
