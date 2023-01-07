@@ -49,6 +49,6 @@ public class MessageCycleController {
     public void getMessage(@RequestBody Message message) {
         message.setEnd_timestamp(new Date());
         Message savedMessage = messageRepository.save(message);
-        log.debug("Message save in database " + savedMessage);
+        log.info("Message save in database " + savedMessage);
     }
 }

@@ -3,14 +3,15 @@ package com.testtask.ms1.aspect;
 import com.testtask.ms1.model.Message;
 import com.testtask.ms1.repository.MessageRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Aspect
@@ -24,24 +25,18 @@ public class TimeSendingAdvice {
     public void sendMessage() {
     }
 
-    @Around("sendMessage()")
-    public void timeWorkAndCountMessage(ProceedingJoinPoint joinPoint) throws InterruptedException {
-        try {
-            joinPoint.proceed();
-        } catch (Throwable e) {
-            log.info("Error sending message");
-        }
-
-        Thread.sleep(1500);
+    @After("sendMessage()")
+    public void timeWorkAndCountMessage() throws InterruptedException {
+        Thread.sleep(500);
         List<Message> firstAndLastMessageFromLastSession = messageRepository.findFirstAndLastMessageFromLastSession();
         Message firstMessage = null;
         Message lastMessage = null;
         for (Message m :
                 firstAndLastMessageFromLastSession) {
-            firstMessage = firstMessage == null? m: firstMessage;
-            lastMessage = lastMessage == null? m: lastMessage;
-            firstMessage = firstMessage.getId() > m.getId()? m: firstMessage;
-            lastMessage = lastMessage.getId() < m.getId()? m: lastMessage;
+            firstMessage = Objects.isNull(firstMessage) ? m : firstMessage;
+            lastMessage = Objects.isNull(lastMessage) ? m : lastMessage;
+            firstMessage = firstMessage.getId() > m.getId() ? m : firstMessage;
+            lastMessage = lastMessage.getId() < m.getId() ? m : lastMessage;
         }
         int countMessage = Math.abs(lastMessage.getId() - firstMessage.getId()) + 1;
         long workTime = Math.abs(lastMessage.getEnd_timestamp().getTime() - firstMessage.getMc1_timestamp().getTime());

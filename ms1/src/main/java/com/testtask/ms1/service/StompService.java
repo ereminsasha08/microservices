@@ -2,7 +2,6 @@ package com.testtask.ms1.service;
 
 import com.testtask.ms1.model.Message;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,14 +18,8 @@ public class StompService {
     private StompSession session;
     @Value("${interaction.time}")
     private Integer interactionTime;
-
-    public synchronized void setSendFlag(boolean sendFlag) throws InterruptedException {
-        this.sendFlag = sendFlag;
-        Thread.sleep(1500);
-    }
-
     @Getter
-    private  boolean sendFlag;
+    private boolean sendFlag;
 
     @Async
     public void send(int sessionId) throws InterruptedException {
@@ -35,7 +28,7 @@ public class StompService {
         long endTime = startTime;
         while (sendFlag && interactionTime > (endTime - startTime) / 1000) {
             Message message = new Message(sessionId, new Date());
-            log.debug("Send message" + message);
+            log.info("Send message" + message);
             session.send("/app/process-message", message);
             Thread.sleep(500);
             endTime = System.currentTimeMillis();
@@ -48,5 +41,8 @@ public class StompService {
         log.info("Sending message stopped.");
     }
 
-
+    public synchronized void setSendFlag(boolean sendFlag) throws InterruptedException {
+        this.sendFlag = sendFlag;
+        Thread.sleep(1000);
+    }
 }
